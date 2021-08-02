@@ -36,8 +36,8 @@ response_values = {"Strongly Disagree": 1,
                    "Neither agree nor disagree": 3,
                    "Agree": 4,
                    "Strongly Agree": 5,
-                   "Don't Know": 0,
-                   "nan": nan}
+                   "Don't Know": -1,
+                   "nan": nan}  # IEEE value for Not A Number
                 
         
 def extract_data(field, item):
