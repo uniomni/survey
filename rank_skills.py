@@ -18,9 +18,11 @@ filename = sys.argv[1]
 
 
 # Read data from CSV file
-# There are three responses for each skill: How much it is needed, 
-# How well we can access it and how sustainable it is. Therefore we read
-# three columns for each skill.
+# There are three responses for each skill: 
+# - How much it is needed, 
+# - How well we can access it and 
+# - How sustainable is it. 
+# Therefore we read three columns for each skill.
 
 skills_dict = {}
 dataframe = pandas.read_csv(filename)
@@ -94,11 +96,12 @@ for skill in SFIA_abbreviations:
     A = response['ACCESS']
     S = response['SUSTAIN']        
     
-    # Remove "Don't Know" and "N/A" altogether
+    # Remove "Don't Know"
     N = N[N > -1] 
     A = A[A > -1] 
     S = S[S > -1]         
     
+    # Remove "N/A"    
     N = N[~numpy.isnan(N)] 
     A = A[~numpy.isnan(A)] 
     S = S[~numpy.isnan(S)]    
