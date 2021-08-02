@@ -8,7 +8,7 @@ Ole Nielsen - 2021
 """
 
 import csv, sys, pandas, numpy
-from skills_analysis_helpers import extract_data, SFIA_skills, response_values
+from skills_analysis_helpers import extract_data, SFIA_skills, SFIA_abbreviations, response_values, sort_dictionary_by_value
 
    
 # Get filename
@@ -27,7 +27,7 @@ skills_dict = {}
 dataframe = pandas.read_csv(filename)
 
 number_of_responses = -1 # Collect number of responses and check that it is the same across all columns.
-for skill in SFIA_skills:
+for skill in SFIA_abbreviations:
     # Collect responses for each skill
     
     # Find columns with responses for this skill.
@@ -65,9 +65,9 @@ for skill in SFIA_skills:
 
 # Convert responses to numerical values
 responses = {}
-for skill in SFIA_skills:
-    print()
-    print(skill)
+for skill in SFIA_abbreviations:
+    #print()
+    #print(skill)
     responses[skill] = {}  # Create new entry for this skill
     skill_response = skills_dict[skill]  # Responses for this skill
     for key in skill_response:
@@ -76,12 +76,12 @@ for skill in SFIA_skills:
 
             val = response_values[str(response)]  # Turn e.g. nan into a string to index structure.
             responses[skill][key][i] = val
-        print(' ', key, ': ', responses[skill][key])
+        #print(' ', key, ': ', responses[skill][key])
         
 
 # Calculate skills gaps (G) using the formula
 #
-# G = N - min(A, S)
+# G = avg(N - min(A, S))
 # 
 # where 
 # G is the skills gap
@@ -89,17 +89,75 @@ for skill in SFIA_skills:
 # A is how much access we have
 # S is how sustainable the access is
 #
-# Don't know and not applicable are treated is NaN values for the purpose of this computation.
+# Don't know is set to 0 and N/A are treated according to their role in the equation.
 #          
 
 skills_gap = {}
-for skill in SFIA_skills:
+needs = {}
+for skill in SFIA_abbreviations:
     response = responses[skill]
     N = response['NEED']
     A = response['ACCESS']
     S = response['SUSTAIN']        
 
+    # We treat the non numerical values as follows
+    #
+    # Don't know (0) should count as follows
+    # N: 3 (Same as neither agree nor disagree in regards to whether we need the skill)
+    # A: 3 (If we don't know if we have access to a skill we set it to 3 as well)
+    # S: 0 (It is really bad if we don't know if something we need is sustainable).
+    #
+    # N/A (nan) should count as 
+    # N: 0 (i.e. skill not important to this respondent)
+    # A: 3 (we really mind either way)
+    # S: 3 (we don't care if it sustainable so again set it to 3)
+       
+    # Replace Don't Know with appropriate numerical values:
+    N[N==0] = 3  # 0 -> 3
+    A[A==0] = 3  # 0 -> 3
+    S[S==0] = 0  # 0 -> 0
+    
+    # Replace N/A with appropriate numerical values:
+    N[numpy.isnan(N)] = 0  # nan -> 0        
+    A[numpy.isnan(A)] = 3  # nan -> 3
+    S[numpy.isnan(S)] = 3  # nan -> 3    
+                
+    # Round negative numbers to 0 (We care about access and sustainability of skills we don't need)
+    A = (N - numpy.minimum(A, S)).clip(min=0)
+     
+    # Take the average as the skills gap    
+    G = numpy.mean(A)
+    
+    # Save result
+    skills_gap[skill] = G
+    needs[skill] = numpy.mean(N)
+
+
+
+# Print out skills sorted by need only
+L = sort_dictionary_by_value(needs)     
+print()  
+print('------------------------------') 
+print('Skills sorted by average need:')
+print('------------------------------') 
+for item in L[::-1]:  # Reverse order
+    skill = item[0]
+    weight = item[1]
+    print('%.2f: %s (%s)' % (weight, SFIA_skills[skill], skill))
+    
+# Print out skills sorted by gap
+L = sort_dictionary_by_value(skills_gap)
+print()
+print('-----------------------------')     
+print('Skills sorted by average gap:')
+print('-----------------------------') 
+for item in L[::-1]:  # Reverse order
+    skill = item[0]
+    weight = item[1]
+    print('%.2f: %s (%s)' % (weight, SFIA_skills[skill], skill))
+
+
 
     
-#print(responses)            
+
     
