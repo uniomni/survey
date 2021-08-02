@@ -94,41 +94,26 @@ for skill in SFIA_abbreviations:
     A = response['ACCESS']
     S = response['SUSTAIN']        
     
-    print(skill, 'N A S')
-    print(numpy.column_stack((N,A,S)))
-    #print('Needed:', N)
-    #print('Accessed:', A)
-    #print('Sustainable:', S)        
+    # Remove "Don't Know" and "N/A" altogether
+    N = N[N > -1] 
+    A = A[A > -1] 
+    S = S[S > -1]         
     
-
-    # We treat the Don't know (-1) and N/A (nan) as follows
-    #
-    # Don't know (-1) should count as follows
-    # N: 3 (Same as neither agree nor disagree in regards to whether we need the skill)
-    # A: 3 (If we don't know if we have access to a skill we set it to 3 as well)
-    # S: 0 (It is really bad if we don't know if something we need is sustainable).
-    #
-    # N/A (nan) should count as 
-    # N: 0 (i.e. skill not important to this respondent)
-    # A: 3 (we really mind either way)
-    # S: 3 (we don't care if it sustainable so again set it to 3)
-       
-    # Replace "Don't Know" with appropriate numerical values:
-    N[N==-1] = 3  # -1 -> 3
-    A[A==-1] = 3  # -1 -> 3
-    S[S==-1] = 0  # -1 -> 0
+    N = N[~numpy.isnan(N)] 
+    A = A[~numpy.isnan(A)] 
+    S = S[~numpy.isnan(S)]    
     
-    # Replace "N/A" with appropriate numerical values:
-    N[numpy.isnan(N)] = 0  # nan -> 0        
-    A[numpy.isnan(A)] = 3  # nan -> 3
-    S[numpy.isnan(S)] = 3  # nan -> 3    
+    # Find the mean values of each metric
+    N = numpy.mean(N)    
+    A = numpy.mean(A)    
+    S = numpy.mean(S)            
                 
-    # Round negative numbers to 0 (We don't care about access and sustainability of skills we don't need)
-    G = (N - numpy.minimum(A, S))  #.clip(min=0)  # Can round to 0 if needed using this command.
+    # Calculate Gap
+    G = N - min(A, S)
      
-    # Take the averages and save
-    skills_gap[skill] = numpy.mean(G)
-    needs[skill] = numpy.mean(N)
+    # Save the values
+    skills_gap[skill] = G
+    needs[skill] = N    
 
 
 
