@@ -65,8 +65,6 @@ for skill in SFIA_abbreviations:
 # Convert responses to numerical values
 responses = {}
 for skill in SFIA_abbreviations:
-    #print()
-    #print(skill)
     responses[skill] = {}  # Create new entry for this skill
     skill_response = skills_dict[skill]  # Responses for this skill
     for key in skill_response:
@@ -75,7 +73,6 @@ for skill in SFIA_abbreviations:
 
             val = response_values[str(response)]  # Turn e.g. nan into a string to index structure.
             responses[skill][key][i] = val
-        #print(' ', key, ': ', responses[skill][key])
         
 
 # Calculate skills gaps (G) using the formula
@@ -96,6 +93,13 @@ for skill in SFIA_abbreviations:
     N = response['NEED']
     A = response['ACCESS']
     S = response['SUSTAIN']        
+    
+    print(skill, 'N A S')
+    print(numpy.column_stack((N,A,S)))
+    #print('Needed:', N)
+    #print('Accessed:', A)
+    #print('Sustainable:', S)        
+    
 
     # We treat the Don't know (-1) and N/A (nan) as follows
     #
@@ -109,12 +113,12 @@ for skill in SFIA_abbreviations:
     # A: 3 (we really mind either way)
     # S: 3 (we don't care if it sustainable so again set it to 3)
        
-    # Replace Don't Know with appropriate numerical values:
-    N[N==-1] = 3  # 0 -> 3
-    A[A==-1] = 3  # 0 -> 3
-    S[S==-1] = 0  # 0 -> 0
+    # Replace "Don't Know" with appropriate numerical values:
+    N[N==-1] = 3  # -1 -> 3
+    A[A==-1] = 3  # -1 -> 3
+    S[S==-1] = 0  # -1 -> 0
     
-    # Replace N/A with appropriate numerical values:
+    # Replace "N/A" with appropriate numerical values:
     N[numpy.isnan(N)] = 0  # nan -> 0        
     A[numpy.isnan(A)] = 3  # nan -> 3
     S[numpy.isnan(S)] = 3  # nan -> 3    
