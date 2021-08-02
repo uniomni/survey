@@ -7,7 +7,7 @@ python rank_skills.py CSV/Digital Science Maturity and Skills Deep Dive.csv
 Ole Nielsen - 2021
 """
 
-import csv, sys, pandas
+import csv, sys, pandas, numpy
 from skills_analysis_helpers import extract_data, SFIA_skills, response_values
 
    
@@ -26,8 +26,13 @@ filename = sys.argv[1]
 skills_dict = {}
 dataframe = pandas.read_csv(filename)
 
+number_of_responses = -1 # Collect number of responses and check that it is the same across all columns.
 for skill in SFIA_skills:
-    # Collect data for each skill
+    # Collect responses for each skill
+    
+    # Find columns with responses for this skill.
+    # This is done through linear searching, but data is small
+    # so it doesn't pose a performance issue.
     
     additional_columns_to_collect = 0
     for item in dataframe.items():
@@ -48,34 +53,41 @@ for skill in SFIA_skills:
             
             d = skills_dict[skill] = {}   # Create new entry
             d['NEED'] = extract_data('NEED', item)
+            
+            # Record number of responses
+            if number_of_responses == -1:
+                number_of_responses = len(d['NEED'])
+            else:
+                msg = 'Number of responses were not the same across this data'
+                assert number_of_responses == len(d['NEED']), msg
+
 
 
 # Convert responses to numerical values
 responses = {}
 for skill in SFIA_skills:
-
+    print()
+    print(skill)
     responses[skill] = {}  # Create new entry for this skill
-    
-    skill_response = skills_dict[skill]
-    #print()
-    #print(skill)
+    skill_response = skills_dict[skill]  # Responses for this skill
     for key in skill_response:
-        responses[skill][key] = []    
+        responses[skill][key] = numpy.zeros(number_of_responses)    
         for i, response in enumerate(skill_response[key]):
 
-            val = response_values[str(response)]
-            #print(key, i, response, val)            
-            responses[skill][key].append(val)                
+            val = response_values[str(response)]  # Turn e.g. nan into a string to index structure.
+            responses[skill][key][i] = val
+        print(' ', key, ': ', responses[skill][key])
+        
 
-# Calculate skills gaps (g) using the formula
+# Calculate skills gaps (G) using the formula
 #
-# g = n - min(a, s)
+# G = N - min(A, S)
 # 
 # where 
-# g is the skills gap
-# n is how much it is needed
-# a is how much access we have
-# s is how sustainable the access is
+# G is the skills gap
+# N is how much it is needed
+# A is how much access we have
+# S is how sustainable the access is
 #
 # Don't know and not applicable are treated is NaN values for the purpose of this computation.
 #          
@@ -83,7 +95,11 @@ for skill in SFIA_skills:
 skills_gap = {}
 for skill in SFIA_skills:
     response = responses[skill]
+    N = response['NEED']
+    A = response['ACCESS']
+    S = response['SUSTAIN']        
+
 
     
-print(responses)            
+#print(responses)            
     
