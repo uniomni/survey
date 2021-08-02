@@ -86,7 +86,7 @@ for skill in SFIA_abbreviations:
 # N is how much it is needed
 # A is how much access we have
 # S is how sustainable the access is
-#
+
 
 skills_gap = {}
 needs = {}
@@ -96,12 +96,7 @@ for skill in SFIA_abbreviations:
     A = response['ACCESS']
     S = response['SUSTAIN']        
     
-    # Remove "Don't Know"
-    N = N[N > -1] 
-    A = A[A > -1] 
-    S = S[S > -1]         
-    
-    # Remove "N/A"    
+    # Remove "N/A" and Don't Know    
     N = N[~numpy.isnan(N)] 
     A = A[~numpy.isnan(A)] 
     S = S[~numpy.isnan(S)]    

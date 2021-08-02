@@ -31,12 +31,12 @@ SFIA_skills = {'IRMG': 'Information governance',
                
 SFIA_abbreviations = SFIA_skills.keys()               
         
-response_values = {"Strongly Disagree": 1,
-                   "Disagree": 2, 
-                   "Neither agree nor disagree": 3,
-                   "Agree": 4,
-                   "Strongly Agree": 5,
-                   "Don't Know": -1,
+response_values = {"Strongly Disagree": -2,
+                   "Disagree": -1, 
+                   "Neither agree nor disagree": 0,
+                   "Agree": 1,
+                   "Strongly Agree": 2,
+                   "Don't Know": nan,
                    "nan": nan}  # IEEE value for Not A Number
                 
         
