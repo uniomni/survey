@@ -2,7 +2,12 @@
    and rank skills by importance.
 
 Example:
-python rank_skills.py "Digital Science Maturity and Skills Deep Dive.csv"
+python rank_skills.py DSMS_Survey_20210803.csv
+
+The file argument is as downloaded (All Responses Data) from the 
+GA Digital Science Maturity and Skills Deep Dive on Survey Monkey.
+
+The script is specific to this survey only.
 
 Ole Nielsen - 2021
 """
