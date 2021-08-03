@@ -4,7 +4,7 @@
 Example:
 python rank_skills.py DSMS_Survey_20210803.csv
 
-The file argument is as downloaded (All Responses Data) from the 
+The file argument is as downloaded (All Responses Data) from the
 GA Digital Science Maturity and Skills Deep Dive on Survey Monkey.
 
 The script is specific to this survey only.
@@ -18,7 +18,8 @@ import pandas
 import numpy
 
 from skills_analysis_helpers import extract_data, SFIA_skills,\
-    SFIA_abbreviations, response_values, sort_dictionary_by_value
+    SFIA_abbreviations, response_values, sort_dictionary_by_value,\
+    print_sorted_skills
 
 # Get filename
 if len(sys.argv) != 2:
@@ -101,7 +102,7 @@ for skill in SFIA_abbreviations:
 
 
 skills_gap = {}
-needs = {}
+need = {}
 for skill in SFIA_abbreviations:
     response = responses[skill]
     N = response['NEED']
@@ -123,26 +124,7 @@ for skill in SFIA_abbreviations:
 
     # Save the values
     skills_gap[skill] = G
-    needs[skill] = N
+    need[skill] = N
 
-# Print out skills sorted by need only
-L = sort_dictionary_by_value(needs)
-print()
-print('------------------------------')
-print('Skills sorted by average need:')
-print('------------------------------')
-for item in L[::-1]:  # Reverse order
-    skill = item[0]
-    weight = item[1]
-    print('%.2f: %s (%s)' % (weight, SFIA_skills[skill], skill))
-
-# Print out skills sorted by gap
-L = sort_dictionary_by_value(skills_gap)
-print()
-print('-----------------------------')
-print('Skills sorted by average gap:')
-print('-----------------------------')
-for item in L[::-1]:  # Reverse order
-    skill = item[0]
-    weight = item[1]
-    print('%.2f: %s (%s)' % (weight, SFIA_skills[skill], skill))
+print_sorted_skills(need, label='need')
+print_sorted_skills(skills_gap, label='gap')

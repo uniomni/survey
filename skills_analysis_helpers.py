@@ -60,3 +60,22 @@ def sort_dictionary_by_value(D):
     L = [(x[1], x) for x in D.items()]
     L.sort()
     return([(x[1][0], x[1][1]) for x in L])
+
+
+def print_sorted_skills(data, label='value'):
+    """Print out the skills sorted by the processed values
+    """
+
+    header = 'Skills sorted by average %s:' % label
+    line = '-'*len(header)
+
+    print()
+    print(line)
+    print(header)
+    print(line)
+
+    L = sort_dictionary_by_value(data)
+    for item in L[::-1]:  # Reverse order
+        skill = item[0]
+        weight = item[1]
+        print('%.2f: %s (%s)' % (weight, SFIA_skills[skill], skill))
