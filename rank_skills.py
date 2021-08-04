@@ -12,14 +12,12 @@ The script is specific to this survey only.
 Ole Nielsen - 2021
 """
 
-import csv
 import sys
 import pandas
 import numpy
 
-from skills_analysis_helpers import extract_data, SFIA_skills,\
-    SFIA_abbreviations, response_values, sort_dictionary_by_value,\
-    print_sorted_skills
+from skills_analysis_helpers import extract_data,\
+    SFIA_abbreviations, response_values, print_sorted_skills
 
 # Get filename
 if len(sys.argv) != 2:
@@ -35,8 +33,8 @@ filename = sys.argv[1]
 # - How sustainable is it.
 # Therefore we read three columns for each skill.
 
-skills_dict = {}
-dataframe = pandas.read_csv(filename)
+skills_dict = {}  # Dictionary to keep track of skills and rankings
+dataframe = pandas.read_csv(filename)  # Input data
 
 number_of_responses = -1  # Flag keeping track of columns
 for skill in SFIA_abbreviations:
@@ -52,10 +50,10 @@ for skill in SFIA_abbreviations:
             # Collect remaining responses for current skill
 
             if additional_columns_to_collect == 2:
-                d['ACCESS'] = extract_data('ACCESS', item)
+                entry['ACCESS'] = extract_data('ACCESS', item)
 
             if additional_columns_to_collect == 1:
-                d['SUSTAIN'] = extract_data('SUSTAIN', item)
+                entry['SUSTAIN'] = extract_data('SUSTAIN', item)
 
             additional_columns_to_collect -= 1
 
@@ -63,16 +61,18 @@ for skill in SFIA_abbreviations:
             # Collect first response for this skill
             additional_columns_to_collect = 2
 
-            d = skills_dict[skill] = {}   # Create new entry
-            d['NEED'] = extract_data('NEED', item)
+            skills_dict[skill] = {}  # Create new entry
+            entry = skills_dict[skill]  # Shorthand for this entry
+
+            entry['NEED'] = extract_data('NEED', item)
 
             # Record number of responses and test that it is the same across
             # all columns.
             if number_of_responses == -1:
-                number_of_responses = len(d['NEED'])
+                number_of_responses = len(entry['NEED'])
             else:
                 msg = 'Number of responses were not the same across this data'
-                assert number_of_responses == len(d['NEED']), msg
+                assert number_of_responses == len(entry['NEED']), msg
 
 
 # Convert responses to numerical values

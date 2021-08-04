@@ -49,7 +49,7 @@ def extract_data(field, item):
     msg = 'Did not find expected keyword %s in %s' % (field, data[0])
     assert field.lower() in data[0], msg
 
-    return(list(data[1:]))  # Return data as a list
+    return list(data[1:])  # Return data as a list
 
 
 def sort_dictionary_by_value(D):
@@ -78,4 +78,4 @@ def print_sorted_skills(data, label='value'):
     for item in L[::-1]:  # Reverse order
         skill = item[0]
         weight = item[1]
-        print('%.2f: %s (%s)' % (weight, SFIA_skills[skill], skill))
+        print(f'{weight:.2f}: {SFIA_skills[skill]} ({skill})')
