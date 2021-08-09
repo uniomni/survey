@@ -103,6 +103,7 @@ for skill in SFIA_abbreviations:
 
 skills_gap = {}
 need = {}
+unsustainable_skills = {}
 for skill in SFIA_abbreviations:
     response = responses[skill]
     N = response['NEED']
@@ -121,10 +122,13 @@ for skill in SFIA_abbreviations:
 
     # Calculate Gap
     G = N - min(A, S)
+    U = A - S
 
     # Save the values
     skills_gap[skill] = G
     need[skill] = N
+    unsustainable_skills[skill] = U
 
 print_sorted_skills(need, label='need')
 print_sorted_skills(skills_gap, label='gap')
+print_sorted_skills(unsustainable_skills, label='unsustainability')
