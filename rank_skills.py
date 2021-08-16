@@ -36,6 +36,9 @@ filename = sys.argv[1]
 skills_dict = {}  # Dictionary to keep track of skills and rankings
 dataframe = pandas.read_csv(filename)  # Input data
 
+number_of_respondents = dataframe.shape[0]
+print(f'Number of respondents: {number_of_respondents}')
+
 number_of_responses = -1  # Flag keeping track of columns
 for skill in SFIA_abbreviations:
     # Collect responses for each skill
