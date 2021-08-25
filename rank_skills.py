@@ -99,6 +99,10 @@ for skill in SFIA_abbreviations:
 #
 # G = avg(N - min(A, S))
 #
+# and sustainability gaps (U) using the formula
+# 
+# U = A - S
+#
 # where
 # G is the skills gap
 # N is how much it is needed
@@ -125,7 +129,7 @@ for skill in SFIA_abbreviations:
     A = numpy.mean(A)
     S = numpy.mean(S)
 
-    # Calculate Gap
+    # Calculate Gaps
     G = N - min(A, S)
     U = A - S
 
